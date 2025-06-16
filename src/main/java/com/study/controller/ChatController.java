@@ -1,6 +1,7 @@
 package com.study.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.study.dto.ChatMessageDTO;
 import com.study.dto.ChatRequest;
 import com.study.dto.ChatResponse;
 import com.study.service.ChatService;
@@ -15,6 +16,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/chat")
@@ -116,10 +118,13 @@ public class ChatController {
      * @return Mono<ResponseEntity<List<ChatMessage>>> 包含历史消息的响应
      */
     @GetMapping("/history/{sessionId}")
-    public Mono<ResponseEntity<List<ChatMessage>>> getHistory(@PathVariable String sessionId) {
+    public Mono<ResponseEntity<List<ChatMessageDTO>>> getHistory(@PathVariable("sessionId") String sessionId) {
         // 获取历史记录
         List<ChatMessage> history = chatService.getHistory(sessionId);
         // 返回包含历史记录的响应
-        return Mono.just(ResponseEntity.ok(history));
+        List<ChatMessageDTO> dtoList = history.stream()
+                .map(msg -> new ChatMessageDTO(msg.getClass().getSimpleName(), msg.text()))
+                .collect(Collectors.toList());
+        return Mono.just(ResponseEntity.ok(dtoList));
     }
 }

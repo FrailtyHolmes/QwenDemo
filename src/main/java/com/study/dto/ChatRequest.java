@@ -16,5 +16,5 @@ public class ChatRequest {
     private String message;
 
     /** 额外的元数据，可用于扩展功能 */
-    private Map<String, Object> metadata = new HashMap<>();
+//    private Map<String, Object> metadata = new HashMap<>();
 }
